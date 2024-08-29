@@ -22,4 +22,38 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.4" />
   </ItemGroup>
 
+	<ItemGroup>
+		<Folder Include="clientapp\" />
+	</ItemGroup>
+
+	<PropertyGroup>
+		<CustomSourceFolder>wwwroot\browser</CustomSourceFolder>
+		<CustomTargetFolder>wwwroot</CustomTargetFolder>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!-- Your item groups -->
+	</ItemGroup>
+
+	<Target Name="NpmInstall" BeforeTargets="Build">
+		<Exec Command="npm install" WorkingDirectory="clientapp" />
+	</Target>
+
+	<Target Name="NgBuild" DependsOnTargets="NpmInstall" BeforeTargets="Build">
+		<Exec Command="npm run build" WorkingDirectory="clientapp" />
+	</Target>
+
+	<Target Name="MoveFilesToRoot" DependsOnTargets="NgBuild" AfterTargets="Build">
+		<!-- Include all files in the source folder -->
+		<ItemGroup>
+			<AllFiles Include="$(CustomSourceFolder)\**\*.*" />
+		</ItemGroup>
+
+		<!-- Copy files to the target folder -->
+		<Copy SourceFiles="@(AllFiles)" DestinationFolder="$(CustomTargetFolder)\%(RecursiveDir)" />
+
+		<!-- Delete original files after copying -->
+		<Delete Files="@(AllFiles)" />
+	</Target>
+
 </Project>

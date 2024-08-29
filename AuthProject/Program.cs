@@ -2,6 +2,7 @@ using AuthProject.DBContext;
 using AuthProject.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,10 +12,14 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AuthDBContext>(options => 
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
+//builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<AuthDBContext>();
+
+builder.Services.AddDefaultIdentity<AppUser>(options =>
 {
     options.Password.RequireUppercase = true;
 }).AddEntityFrameworkStores<AuthDBContext>().AddDefaultTokenProviders();
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -39,4 +44,5 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+app.MapRazorPages();
 app.Run();

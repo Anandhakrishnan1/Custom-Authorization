@@ -2,6 +2,7 @@ using AuthProject.DBContext;
 using AuthProject.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,12 +12,12 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AuthDBContext>(options => 
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<AuthDBContext>();
+//builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<AuthDBContext>();
 
-//builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
-//{
-//    options.Password.RequireUppercase = true;
-//}).AddEntityFrameworkStores<AuthDBContext>().AddDefaultTokenProviders();
+builder.Services.AddDefaultIdentity<AppUser>(options =>
+{
+    options.Password.RequireUppercase = true;
+}).AddEntityFrameworkStores<AuthDBContext>().AddDefaultTokenProviders();
 
 builder.Services.AddAuthorization();
 
